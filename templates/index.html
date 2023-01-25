@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
+  </head>
+  <body>
+    <div class="login">
+      <h1>Diabetic Retinopathy Detector</h1>
+      <form action="{{ url_for('score')}}" enctype="multipart/form-data" method="post">
+        <input type="file" id="img" name="u" accept="image/*">
+        <button type="submit" class="btn btn-primary btn-block btn-large">
+          Score
+        </button>
+      </form>
+      <br />
+      <br />
+      <div class="predict">
+        {{ prediction_text }}
+      </div>
+    </div>
+  </body>
+</html>
