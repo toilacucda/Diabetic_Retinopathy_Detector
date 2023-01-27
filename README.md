@@ -1,6 +1,9 @@
 # Diabetic_Retinopathy_Detector
 A flask app that can detect the stage of diabetic retinopathy using an eyeball image
 
+## Medium Article Explaining the steps that I followed:
+https://medium.com/@harikeshpratapsinghwork/aptos-2019-blindness-detection-92cb4f11260d
+
 ## Weights
 Model weights can be downloaded from here: https://drive.google.com/file/d/1JR3djgUQX__rhw1cs_PrcA3xYsoctyu3/view?usp=share_link
 
