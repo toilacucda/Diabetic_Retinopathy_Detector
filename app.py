@@ -1,4 +1,5 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, url_for
+import os
 import numpy as np
 import cv2
 import tensorflow as tf
@@ -50,21 +51,35 @@ def preprocess(image):
     image = cv2.addWeighted (image, 4, cv2.GaussianBlur(image, (0,0) ,10), -4, 128)
     return image
 
+UPLOAD_FOLDER = 'static/uploads'
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
 @app.route('/')
 def home():
     return render_template('index.html')
 
-@app.route('/score',methods=['POST'])
+@app.route('/score', methods=['POST'])
 def score():
-    if request.method=="POST":
-    
+    if request.method == "POST":
         image = request.files['u']
-        image = Image.open(image)
-        image = np.array(image)
-        image = preprocess(image)
-        image = np.expand_dims(image, axis=0)
-        pred = model.predict(image)
+        # Save the uploaded image temporarily
+        image_path = os.path.join(app.config['UPLOAD_FOLDER'], image.filename)
+        image.save(image_path)
+
+        # Open and preprocess the image
+        img = Image.open(image_path)
+        img = np.array(img)
+        img = preprocess(img)  # Assuming preprocess function is defined
+        img = np.expand_dims(img, axis=0)
+        
+        # Get prediction
+        pred = model.predict(img)
         output = np.argmax(pred, axis=1)
-    return render_template('index.html', prediction_text='Diabetic Retinopathy Stage {}'.format(output[0]))
+        prediction_text = f'Diabetic Retinopathy Stage {output[0]}'
+        
+    return render_template('index.html', prediction_text=prediction_text, image_url=url_for('static', filename='uploads/' + image.filename))
+
     
 app.run(debug=True)

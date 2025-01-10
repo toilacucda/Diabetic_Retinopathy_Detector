@@ -1,24 +1,53 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='styles.css') }}"
-    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+    <script>
+      // Function to show the selected image and clear the previous prediction result
+      function previewImage() {
+        document.getElementById("predictionText").textContent = "";  // Clear previous prediction
+        const file = document.getElementById("img").files[0];
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+          const imagePreview = document.getElementById("imagePreview");
+          imagePreview.src = e.target.result;
+          imagePreview.style.display = "block"; // Show the image element
+        };
+        
+        if (file) {
+          reader.readAsDataURL(file);
+        }
+      }
+    </script>
   </head>
   <body>
     <div class="login">
       <h1>Diabetic Retinopathy Detector</h1>
-      <form action="{{ url_for('score')}}" enctype="multipart/form-data" method="post">
-        <input type="file" id="img" name="u" accept="image/*">
+      <form action="{{ url_for('score') }}" enctype="multipart/form-data" method="post">
+        <input type="file" id="img" name="u" accept="image/*" onchange="previewImage()">
         <button type="submit" class="btn btn-primary btn-block btn-large">
           Score
         </button>
       </form>
       <br />
+      
+      <!-- Image preview element -->
+      <div>
+        {% if image_url %}
+          <img id="imagePreview" src="{{ image_url }}" alt="Image Preview" style="max-width: 100%;" />
+        {% else %}
+          <img id="imagePreview" src="" alt="Image Preview" style="max-width: 100%; display: none;" />
+        {% endif %}
+      </div>
+      
       <br />
-      <div class="predict">
-        {{ prediction_text }}
+      
+      <!-- Prediction result will be shown here, below the image -->
+      <div class="predict" id="predictionText">
+        {% if prediction_text %}
+          <p>{{ prediction_text }}</p>
+        {% endif %}
       </div>
     </div>
   </body>
